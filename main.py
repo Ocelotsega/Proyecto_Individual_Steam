@@ -17,7 +17,6 @@ modelo_final=pd.read_parquet("../DatosML/ModeloFinal.parquet")
 
 
 
-#Primera función
 
 
 
