@@ -8,11 +8,11 @@ from typing import List
 app = FastAPI()
 
 #Archivos para consumirse en la api
-games=pd.read_parquet("../PI-Steam/DataSets/steam_games.parquet")
-developer_opinion=pd.read_parquet("../PI-Steam/Funciones/developer_opinion.parquet")
-user_items=pd.read_parquet("../PI-Steam/DataSets/user_items.parquet")
-playtime=pd.read_parquet("../PI-Steam/Funciones/playtime.parquet")
-modelo_final=pd.read_parquet("../PI-Steam/DatosML/ModeloFinal.parquet")
+games=pd.read_parquet("DataSets/steam_games.parquet")
+developer_opinion=pd.read_parquet("Funciones/developer_opinion.parquet")
+user_items=pd.read_parquet("DataSets/user_items.parquet")
+playtime=pd.read_parquet("Funciones/playtime.parquet")
+modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 
 
 
