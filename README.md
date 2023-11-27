@@ -20,8 +20,11 @@ Durante esta etapa, generamos los archivos necesarios para la implementación de
 # Feature Engineering
 
 En esta etapa, diseñamos funciones, la API y las tablas para su propio consumo. Se cargaron y procesaron los datos, y se llevó a cabo un análisis de sentimientos en la columna de reseñas utilizando VADER. En este análisis, asignamos valores de 1 para representar sentimientos negativos, 0 para neutral y 2 para positivos. Además, realizamos un análisis de sentimientos a lo largo de los años de lanzamiento de los juegos, presentando una distribución detallada de los resultados.
+
+
 -Enlace de la API:
 https://pi-steamgames-ocelotsega.onrender.com/docs#/
+---  
 
 # Conclusiones 
 Este proyecto de Steam Games, centrado en el desarrollo de un sistema de recomendación item-item y el análisis de sentimientos de usuarios, ha brindado valiosas percepciones sobre la interacción de la comunidad de Steam con los juegos. A continuación, se destacan algunas conclusiones clave:
