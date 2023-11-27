@@ -129,16 +129,42 @@ def sentiment_analysis(developer: str):
     result = {developer: sentiment_counts}
     return JSONResponse(content=result)
 
-@app.get('/encontrar-juegos-similares')
-def encontrar_juegos_similares(id_juego: int):
-    try:
-        juego_indice = modelo_final.index[modelo_final['id'] == id_juego].item()
-    except ValueError:
+# Función para encontrar juegos similares
+def encontrar_juegos_similares(id_juego: int, modelo_final: pd.DataFrame = Depends(lambda x: modelo_final)):
+    """
+    Encuentra juegos similares a un juego dado por su ID.
+
+    Parameters:
+    - id_juego: ID del juego para el cual se desean encontrar juegos similares.
+    - modelo_final: DataFrame que contiene las características de los juegos.
+
+    Returns:
+    - Lista de nombres de juegos similares.
+    """
+    # Encuentra el índice del juego ingresado por ID
+    juego_indice = modelo_final.index[modelo_final['id'] == id_juego].tolist()
+
+    # Verifica si el juego con el ID especificado existe en la base de datos
+    if not juego_indice:
         raise HTTPException(status_code=404, detail=f"El juego con el ID {id_juego} no existe en la base de datos.")
 
-    juego_caracteristicas = modelo_final.iloc[juego_indice, 3:].values.reshape(1, -1)
-    similitudes_render = cosine_similarity(modelo_final.iloc[:, 3:], juego_caracteristicas)
-    indices_juegos_similares = similitudes_render.argsort(axis=0)[::-1][1:6].flatten()[1:]
-    juegos_similares = modelo_final.iloc[indices_juegos_similares, 'title'].tolist()
+    juego_indice = juego_indice[0]
 
+    # Extrae las características del juego ingresado
+    juego_caracteristicas = modelo_final.iloc[juego_indice, 3:].values.reshape(1, -1)
+
+    # Calcula la similitud coseno entre el juego ingresado y todos los demás juegos
+    similitudes_render = cosine_similarity(modelo_final.iloc[:, 3:], juego_caracteristicas)
+
+    # Obtiene los índices de los juegos más similares (excluyendo el juego de entrada)
+    indices_juegos_similares = similitudes_render.argsort(axis=0)[::-1][1:6].flatten()[1:]
+
+    # Obtiene los juegos más similares en función de los índices
+    juegos_similares = modelo_final.iloc[indices_juegos_similares]['title'].tolist()
+
+    return juegos_similares
+
+# Decorador y endpoint para la función encontrar_juegos_similares
+@app.get('/encontrar-juegos-similares/{id_juego}', response_model=List[str])
+def encontrar_juegos_similares_endpoint(id_juego: int, juegos_similares: List[str] = Depends(encontrar_juegos_similares)):
     return JSONResponse(content=juegos_similares)
