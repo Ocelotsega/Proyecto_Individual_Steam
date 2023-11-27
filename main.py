@@ -6,6 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from typing import List
 
 
+app = FastAPI()
 
 
 
@@ -20,7 +21,7 @@ modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 
 @app.get("/")
 def read_root():
-    return {"message": "¡Bienvenido a mi API en FastAPI!"}
+    return {"message": "Proyecto Individual"}
 
 
 
@@ -148,41 +149,3 @@ def sentiment_analysis(developer: str):
 
 
 
-#Modelo de recomendación 
-def encontrar_juegos_similares(id_juego: int) -> List[str]:
-    """
-    Encuentra juegos similares a un juego dado por su ID.
-
-    Parameters:
-    - id_juego: ID del juego para el cual se desean encontrar juegos similares.
-
-    Returns:
-    - Lista de nombres de juegos similares.
-    """
-    # Encuentra el índice del juego ingresado por ID
-    juego_indice = modelo_final.index[modelo_final['id'] == id_juego].tolist()
-
-    # Verifica si el juego con el ID especificado existe en la base de datos
-    if not juego_indice:
-        raise HTTPException(status_code=404, detail=f"El juego con el ID {id_juego} no existe en la base de datos.")
-
-    juego_indice = juego_indice[0]
-
-    # Extrae las características del juego ingresado
-    juego_caracteristicas = modelo_final.iloc[juego_indice, 3:].values.reshape(1, -1)
-
-    # Calcula la similitud coseno entre el juego ingresado y todos los demás juegos
-    similitudes_render = cosine_similarity(modelo_final.iloc[:, 3:], juego_caracteristicas)
-
-    # Obtiene los índices de los juegos más similares (excluyendo el juego de entrada)
-    indices_juegos_similares = similitudes_render.argsort(axis=0)[::-1][1:6].flatten()[1:]
-
-    # Obtiene los juegos más similares en función de los índices
-    juegos_similares = modelo_final.iloc[indices_juegos_similares]['title'].tolist()
-
-    return juegos_similares
-
-# Decorador y endpoint para la función encontrar_juegos_similares
-@app.get('/encontrar-juegos-similares/{id_juego}', response_model=List[str])
-def encontrar_juegos_similares_endpoint(id_juego: int):
-    return encontrar_juegos_similares(id_juego)
