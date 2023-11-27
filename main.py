@@ -42,6 +42,29 @@ def validate_year(year):
         raise HTTPException(status_code=404, detail=f"Año {year} no encontrado")
 
 # Primera función optimizada
+@app.get("/")
+def read_root():
+    return {"message": "Proyecto Individual"}
+
+# Funciones de validación y optimización
+
+def validate_genre(genre):
+    """
+    Valida si el género existe en el conjunto de datos.
+    """
+    genre_name = genre.capitalize()
+    df_filtered = games[games['genres'].str.contains(genre, case=False, na=False)]
+    if df_filtered.empty:
+        raise HTTPException(status_code=404, detail=f"Género {genre_name} no encontrado")
+
+def validate_year(year):
+    """
+    Valida si el año existe en el conjunto de datos.
+    """
+    if year not in developer_opinion['release_date'].unique():
+        raise HTTPException(status_code=404, detail=f"Año {year} no encontrado")
+
+# Primera función optimizada
 @app.get('/UserForGenre')
 def user_for_genre(genre: str):
     """
@@ -63,71 +86,3 @@ def user_for_genre(genre: str):
         "Horas jugadas": [{"Año": str(row['Año']), "Horas": row['Horas']} for _, row in playtime_by_year.iterrows()]
     }
     return result
-
-# Segunda función optimizada
-@app.get('/UsersRecommend', response_model=List[dict])
-def users_recommend(year: int):
-    """
-    Devuelve el top 3 de juegos MÁS recomendados por usuarios para el año dado.
-    """
-    validate_year(year)
-
-    df_filtered = developer_opinion[(developer_opinion['release_date'] == year) & (developer_opinion['recommend'] == True)]
-    df_sorted = df_filtered.sort_values(by='Positivo', ascending=False).head(3)
-
-    result = [{"Puesto {}".format(i+1): {"Título": title, "Puntuación Positiva": positive_score}} for i, (title, positive_score) in enumerate(zip(df_sorted['title'], df_sorted['Positivo']))]
-    
-    return result
-
-# Tercera función optimizada
-@app.get('/UsersWorstDeveloper', response_model=List[dict])
-def users_worst_developer(year: int):
-    """
-    Devuelve el top 3 de desarrolladoras con juegos MENOS recomendados por usuarios para el año dado.
-    """
-    validate_year(year)
-
-    df_filtered = developer_opinion[(developer_opinion['release_date'] == year) & (developer_opinion['sentiment_analisis'].isin([0, 1, 2]))]
-    df_grouped = df_filtered.groupby(['developer', 'sentiment_analisis'])['sentiment_analisis'].count().unstack(fill_value=0).reset_index()
-    df_grouped.columns = ['developer', 'Neutral', 'Negativo', 'Positivo']
-    df_sorted = df_grouped.sort_values(by='Negativo', ascending=False).head(3)
-
-    result = [{"Puesto {}".format(i+1): {"Desarrolladora": developer, "Puntuación Negativa": negative_points}} for i, (developer, negative_points) in enumerate(zip(df_sorted['developer'], df_sorted['Negativo']))]
-    
-    return result
-
-# Cuarta función optimizada
-@app.get('/sentiment_analysis')
-def sentiment_analysis(developer: str):
-    """
-    Devuelve un diccionario con el nombre de la desarrolladora como llave y una lista con la cantidad total de registros
-    de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor.
-    """
-    df_filtered = developer_opinion[developer_opinion['developer'].notnull()]
-    df_filtered['developer'] = df_filtered['developer'].astype(str)
-    df_filtered = df_filtered[df_filtered['developer'] == developer]
-
-    if df_filtered.empty:
-        raise HTTPException(status_code=404, detail=f"Desarrolladora '{developer}' no encontrada")
-
-    sentiment_counts = df_filtered['sentiment_analisis'].value_counts().to_dict()
-    adjusted_sentiments = {2: "Positivo", 0: "Neutral", 1: "Negativo"}
-    sentiment_counts = {adjusted_sentiments[key]: value for key, value in sentiment_counts.items()}
-
-    result = {developer: sentiment_counts}
-    return result
-
-# Modelo de recomendación optimizado
-@app.get('/encontrar-juegos-similares/{id_juego}', response_model=List[str])
-def encontrar_juegos_similares_endpoint(id_juego: int):
-    try:
-        juego_indice = modelo_final.index[modelo_final['id'] == id_juego].item()
-    except ValueError:
-        raise HTTPException(status_code=404, detail=f"El juego con el ID {id_juego} no existe en la base de datos.")
-
-    juego_caracteristicas = modelo_final.iloc[juego_indice, 3:].values.reshape(1, -1)
-    similitudes_render = cosine_similarity(modelo_final.iloc[:, 3:], juego_caracteristicas)
-    indices_juegos_similares = similitudes_render.argsort(axis=0)[::-1][1:6].flatten()[1:]
-    juegos_similares = modelo_final.iloc[indices_juegos_similares, 'title'].tolist()
-
-    return juegos_similares
