@@ -13,7 +13,6 @@ app = FastAPI()
 #Archivos para consumirse en la api
 games=pd.read_parquet("DataSets/steam_games.parquet")
 developer_opinion=pd.read_parquet("Funciones/developer_opinion.parquet")
-user_items=pd.read_parquet("DataSets/user_items.parquet")
 playtime=pd.read_parquet("Funciones/playtime.parquet")
 modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 
@@ -23,46 +22,11 @@ modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 def read_root():
     return {"message": "Proyecto Individual"}
 
-# Funciones de validación y optimización
 
-def validate_genre(genre):
-    """
-    Valida si el género existe en el conjunto de datos.
-    """
-    genre_name = genre.capitalize()
-    df_filtered = games[games['genres'].str.contains(genre, case=False, na=False)]
-    if df_filtered.empty:
-        raise HTTPException(status_code=404, detail=f"Género {genre_name} no encontrado")
 
-def validate_year(year):
-    """
-    Valida si el año existe en el conjunto de datos.
-    """
-    if year not in developer_opinion['release_date'].unique():
-        raise HTTPException(status_code=404, detail=f"Año {year} no encontrado")
 
-# Primera función optimizada
-@app.get("/")
-def read_root():
-    return {"message": "Proyecto Individual"}
 
-# Funciones de validación y optimización
 
-def validate_genre(genre):
-    """
-    Valida si el género existe en el conjunto de datos.
-    """
-    genre_name = genre.capitalize()
-    df_filtered = games[games['genres'].str.contains(genre, case=False, na=False)]
-    if df_filtered.empty:
-        raise HTTPException(status_code=404, detail=f"Género {genre_name} no encontrado")
-
-def validate_year(year):
-    """
-    Valida si el año existe en el conjunto de datos.
-    """
-    if year not in developer_opinion['release_date'].unique():
-        raise HTTPException(status_code=404, detail=f"Año {year} no encontrado")
 
 # Primera función optimizada
 @app.get('/UserForGenre')
@@ -70,7 +34,7 @@ def user_for_genre(genre: str):
     """
     Obtiene el usuario con más horas jugadas para un género dado.
     """
-    validate_genre(genre)
+    
 
     genre_name = genre.capitalize()
     df_filtered = games[games['genres'].str.contains(genre, case=False, na=False)]
