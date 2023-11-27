@@ -4,6 +4,8 @@ from fastapi import FastAPI, HTTPException
 from typing import List
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List
+from fastapi.responses import HTMLResponse
+
 
 
 app = FastAPI()
@@ -20,7 +22,39 @@ modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 
 @app.get("/")
 def read_root():
-    return {"message": "Proyecto Individual"}
+
+@app.get("/", response_class=HTMLResponse)
+async def inicio():
+    template = """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>API Steam</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }
+                h1 {
+                    color: #333;
+                    text-align: center;
+                }
+                p {
+                    color: #666;
+                    text-align: center;
+                    font-size: 18px;
+                    margin-top: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>API Consultas</h1>
+        </body>
+    </html>
+    """
+   
+    return HTMLResponse(content=template)
+
 
 
 
@@ -49,4 +83,19 @@ def user_for_genre(genre: str):
         f"Usuario con más horas jugadas para Género {genre_name}": user_with_most_playtime,
         "Horas jugadas": [{"Año": str(row['Año']), "Horas": row['Horas']} for _, row in playtime_by_year.iterrows()]
     }
+    return result
+
+
+#Segunda función
+@app.get('/UsersRecommend', response_model=List[dict])
+def users_recommend(year: int):
+    """
+    Devuelve el top 3 de juegos MÁS recomendados por usuarios para el año dado.
+    """
+
+    df_filtered = developer_opinion[(developer_opinion['release_date'] == year) & (developer_opinion['recommend'] == True)]
+    df_sorted = df_filtered.sort_values(by='Positivo', ascending=False).head(3)
+
+    result = [{"Puesto {}".format(i+1): {"Título": title, "Puntuación Positiva": positive_score}} for i, (title, positive_score) in enumerate(zip(df_sorted['title'], df_sorted['Positivo']))]
+    
     return result
