@@ -20,8 +20,6 @@ modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 
 
 
-@app.get("/")
-def read_root():
 
 @app.get("/", response_class=HTMLResponse)
 async def inicio():
