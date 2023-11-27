@@ -6,14 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from typing import List
 
 
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 
 #Archivos para consumirse en la api
