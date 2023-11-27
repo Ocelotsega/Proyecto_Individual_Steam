@@ -7,6 +7,14 @@ from typing import List
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 #Archivos para consumirse en la api
 games=pd.read_parquet("DataSets/steam_games.parquet")
