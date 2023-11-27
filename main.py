@@ -17,6 +17,9 @@ modelo_final=pd.read_parquet("DatosML/ModeloFinal.parquet")
 
 
 
+@app.get("/")
+def read_root():
+    return {"message": "¡Bienvenido a mi API en FastAPI!"}
 
 
 
