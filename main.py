@@ -1,10 +1,9 @@
-from fastapi import FastAPI
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.responses import HTMLResponse
+from fastapi.responses import JSONResponse
 import pandas as pd
-from typing import List
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List
-from fastapi.responses import HTMLResponse
 
 
 
@@ -61,12 +60,11 @@ async def inicio():
 
 
 # Primera función optimizada
-@app.get('/UserForGenre{geneo}', name='UserForGenre')
+@app.get('/UserForGenre')
 def user_for_genre(genre: str):
     """
     Obtiene el usuario con más horas jugadas para un género dado.
     """
-    
 
     genre_name = genre.capitalize()
     df_filtered = games[games['genres'].str.contains(genre, case=False, na=False)]
@@ -81,11 +79,9 @@ def user_for_genre(genre: str):
         f"Usuario con más horas jugadas para Género {genre_name}": user_with_most_playtime,
         "Horas jugadas": [{"Año": str(row['Año']), "Horas": row['Horas']} for _, row in playtime_by_year.iterrows()]
     }
-    return result
+    return JSONResponse(content=result)
 
-
-#Segunda función
-@app.get('/UsersRecommend', response_model=List[dict])
+@app.get('/UsersRecommend')
 def users_recommend(year: int):
     """
     Devuelve el top 3 de juegos MÁS recomendados por usuarios para el año dado.
@@ -96,4 +92,4 @@ def users_recommend(year: int):
 
     result = [{"Puesto {}".format(i+1): {"Título": title, "Puntuación Positiva": positive_score}} for i, (title, positive_score) in enumerate(zip(df_sorted['title'], df_sorted['Positivo']))]
     
-    return result
+    return JSONResponse(content=result)
