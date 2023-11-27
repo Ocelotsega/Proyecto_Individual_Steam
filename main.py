@@ -61,7 +61,7 @@ async def inicio():
 
 
 # Primera función optimizada
-@app.get('/UserForGenre')
+@app.get('/UserForGenre{geneo}', name='UserForGenre')
 def user_for_genre(genre: str):
     """
     Obtiene el usuario con más horas jugadas para un género dado.
