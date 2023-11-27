@@ -1,6 +1,6 @@
 from fastapi import FastAPI
+from fastapi import FastAPI, Query, HTTPException
 import pandas as pd
-from fastapi import FastAPI, HTTPException
 from typing import List
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List
