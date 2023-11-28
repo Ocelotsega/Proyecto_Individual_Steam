@@ -73,6 +73,10 @@ def user_for_genre(genre: str):
     user_with_most_playtime = df_merged.groupby('user_id')['playtime_forever'].sum().idxmax()
     playtime_by_year = df_merged.groupby(['release_date', 'user_id'])['playtime_forever'].sum().reset_index()
     playtime_by_year = playtime_by_year[playtime_by_year['user_id'] == user_with_most_playtime]
+
+    # Convertir los minutos a horas
+    playtime_by_year['playtime_forever'] = playtime_by_year['playtime_forever'] / 60
+
     playtime_by_year = playtime_by_year.rename(columns={'release_date': 'Año', 'playtime_forever': 'Horas'})
 
     result = {
