@@ -35,6 +35,7 @@ Durante esta etapa, generamos los archivos necesarios para la implementación de
 En esta fase crítica, diseñamos funciones especializadas, desarrollamos una API intuitiva y creamos tablas optimizadas para su propio consumo. Realizamos una carga y procesamiento eficiente de los datos y llevamos a cabo un análisis de sentimientos en la columna de reseñas utilizando VADER. En este análisis, asignamos valores de 1 para representar sentimientos negativos, 0 para neutral y 2 para positivos. Además, realizamos un análisis de sentimientos a lo largo de los años de lanzamiento de los juegos, presentando una distribución detallada de los resultados.
 
 [API](https://pi-steamgames-ocelotsega.onrender.com/docs)
+
 [Video](https://youtu.be/i9gnxpeYu4s?si=m4pj1VCbuOZ52T1E)
 
 ---  
