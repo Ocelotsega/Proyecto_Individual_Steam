@@ -8,7 +8,7 @@
 
 ---
 
-# Steam Games: Sistema de Recomendación Item-Item
+> # Steam Games: Sistema de Recomendación Item-Item
 
 En este proyecto, asumo el rol de data scientist para llevar a cabo un análisis exhaustivo de los sentimientos expresados por los usuarios de Steam en relación con los juegos, considerando aspectos clave como género, desarrollador y año de lanzamiento. Como parte fundamental de este trabajo, hemos desarrollado un MVP que incluye un robusto modelo de recomendación item-item y un modelo NLP. En este contexto, hemos empleado VADER para el análisis de sentimientos, proporcionando una interpretación numérica precisa de las emociones expresadas.
 
@@ -39,7 +39,7 @@ En esta fase crítica, diseñamos funciones especializadas, desarrollamos una AP
 [Video](https://youtu.be/i9gnxpeYu4s?si=m4pj1VCbuOZ52T1E)
 
 ---  
-# Conclusiones 
+> # Conclusiones 
 
 En resumen, este proyecto ha amalgamado técnicas avanzadas de análisis de datos y aprendizaje automático con herramientas de análisis de sentimientos. Proporciona una solución integral que beneficia tanto a los usuarios como a los desarrolladores de juegos. Este enfoque se presenta como una base sólida, adaptable y expansible para abordar desafíos similares en el ámbito de las recomendaciones y el análisis de sentimientos en diversas plataformas y aplicaciones.
 
